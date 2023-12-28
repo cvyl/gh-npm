@@ -1,1 +1,2 @@
-
+name: multipack
+description: Multi-publish to both GitHub and NPM Package registry
