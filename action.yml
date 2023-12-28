@@ -7,7 +7,7 @@ branding:
 inputs:
   node_version:
     description: 'Node.js version'
-    default: '16'
+    default: '12'
 
   npm_scope:
     description: 'NPM scope'
@@ -19,6 +19,7 @@ inputs:
 
 runs:
   using: 'composite'
+  shell: bash  # Specify the shell to be used in the run steps
   steps:
     - name: Checkout code
       run: actions/checkout@v4
