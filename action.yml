@@ -1,4 +1,4 @@
-name: multipack
+name: gh-npm
 description: Multi-publish to both GitHub and NPM Package registry
 branding:
   icon: package
