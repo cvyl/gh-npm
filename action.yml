@@ -1,5 +1,7 @@
 name: multipack
 description: Multi-publish to both GitHub and NPM Package registry
+icon: package
+color: purple
 
 on:
   push:
