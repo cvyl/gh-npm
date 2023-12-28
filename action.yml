@@ -1,2 +1,41 @@
 name: multipack
 description: Multi-publish to both GitHub and NPM Package registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  multipack:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: NPM Publish
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }} # Replace with your Node.js version
+          registry-url: 'https://registry.npmjs.org'
+          scope: ${{ env.NPM_SCOPE }} # Replace with your NPM scope
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # Replace with your NPM authentication token
+        run: |
+          npm ci
+          npm publish
+
+      - name: GitHub Publish
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }} # Replace with your Node.js version
+          registry-url: 'https://npm.pkg.github.com'
+          scope: ${{ env.GITHUB_SCOPE }} # Replace with your GitHub scope
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token is already available as a secret
+        run: |
+          npm ci
+          npm publish
