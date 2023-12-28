@@ -4,41 +4,45 @@ branding:
   icon: package
   color: purple
 
-on:
-  push:
-    branches:
-      - main
+inputs:
+  node_version:
+    description: 'Node.js version'
+    default: '16'
 
-jobs:
-  multipack:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  npm_scope:
+    description: 'NPM scope'
+    required: true
 
-      - name: NPM Publish
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }} # Replace with your Node.js version
-          registry-url: 'https://registry.npmjs.org'
-          scope: ${{ env.NPM_SCOPE }} # Replace with your NPM scope
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # Replace with your NPM authentication token
-        run: |
-          npm ci
-          npm publish
+  github_scope:
+    description: 'GitHub scope'
+    required: true
 
-      - name: GitHub Publish
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }} # Replace with your Node.js version
-          registry-url: 'https://npm.pkg.github.com'
-          scope: ${{ env.GITHUB_SCOPE }} # Replace with your GitHub scope
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token is already available as a secret
-        run: |
-          npm ci
-          npm publish
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      run: actions/checkout@v4
+
+    - name: NPM Publish
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+        registry-url: 'https://registry.npmjs.org'
+        scope: ${{ inputs.npm_scope }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      run: |
+        npm ci
+        npm publish
+
+    - name: GitHub Publish
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+        registry-url: 'https://npm.pkg.github.com'
+        scope: ${{ inputs.github_scope }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        npm ci
+        npm publish
