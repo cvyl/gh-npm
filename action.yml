@@ -22,9 +22,11 @@ runs:
   shell: bash  # Specify the shell to be used in the run steps
   steps:
     - name: Checkout code
+      shell: bash
       run: actions/checkout@v4
 
     - name: NPM Publish
+      shell: bash
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node_version }}
@@ -37,6 +39,7 @@ runs:
         npm publish
 
     - name: GitHub Publish
+      shell: bash
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node_version }}
