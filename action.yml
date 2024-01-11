@@ -25,17 +25,20 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node_version }}
+      shell: bash
 
     - name: NPM Publish
       run: |
         npm ci
         npm publish --access public
+      shell: bash
       env:
-        NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
     - name: GitHub Publish
       run: |
         npm ci
         npm publish --access public
+      shell: bash
       env:
-        NODE_AUTH_TOKEN: ${{ inputs.github_token }}
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
