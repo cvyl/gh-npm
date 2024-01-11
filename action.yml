@@ -1,50 +1,37 @@
-name: gh-npm
-description: Multi-publish to both GitHub and NPM Package registry
-branding:
-  icon: package
-  color: purple
-
+name: 'gh-npm'
+description: 'Multi-publish to both GitHub and NPM Package registry'
 inputs:
   node_version:
     description: 'Node.js version'
-    default: '12'
-
+    required: true
   npm_scope:
     description: 'NPM scope'
     required: true
-
   github_scope:
     description: 'GitHub scope'
     required: true
 
 runs:
   using: 'composite'
-  shell: bash
   steps:
-    - name: Install Dependencies
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ inputs.node_version }}
-        registry-url: 'https://registry.npmjs.org'
-      run: npm ci
-
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: NPM Publish
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node_version }}
-        registry-url: 'https://registry.npmjs.org'
+
+    - name: NPM Publish
+      run: |
+        npm ci
+        npm publish --access public
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      run: npm publish --access public
+        NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
 
     - name: GitHub Publish
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ inputs.node_version }}
-        registry-url: 'https://npm.pkg.github.com'
+      run: |
+        npm ci
+        npm publish --access public
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm publish --access public
+        NODE_AUTH_TOKEN: ${{ inputs.github_token }}
